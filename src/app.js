@@ -21,6 +21,9 @@ import benefitsRoutes from "./routes/benefits.js";
 import birthdayRoutes from "./routes/birthday.js";
 import anniversaryRoutes from "./routes/anniversary.js";
 import summarydashbordRoutes from "./routes/SumDashbord.js";
+import addpersonalRoutes from "./routes/appPersonalList.js";
+import editpersonalRoutes from "./routes/editPersonalList.js";
+import deletePersonalRoutes from "./routes/deletePersonal.js";
 const app = express();
 
 // Settings
@@ -56,7 +59,9 @@ app.use("/api/benefits", benefitsRoutes);
 app.use("/api/alerts/birthday", birthdayRoutes);
 app.use("/api/alerts/anniversary", anniversaryRoutes);
 app.use("/api/sumdashboard", summarydashbordRoutes);
-
+app.use("/api/appPersonalList", addpersonalRoutes);
+app.use("/api/editPersonalList", editpersonalRoutes);
+app.use("/api/deletePersonal", deletePersonalRoutes);
 
 
 export default app;
