@@ -30,12 +30,12 @@ router.post("/", async (req, res) => {
       Gender
     } = req.body;
 
-    // ✅ validate nhẹ
+    // validate nhẹ
     if (!First_Name || !Last_Name) {
       return res.status(400).json({ error: "Thiếu tên" });
     }
 
-    // ✅ convert Gender -> bit
+    // convert Gender -> bit
     let genderBit;
     if (Gender?.toLowerCase() === "male") genderBit = 1;
     else if (Gender?.toLowerCase() === "female") genderBit = 0;
@@ -45,7 +45,7 @@ router.post("/", async (req, res) => {
 
     const request = new sql.Request(transaction);
 
-    // 🔥 lock bảng để tránh trùng ID
+    // lock bảng để tránh trùng ID
     const result = await request.query(`
       SELECT ISNULL(MAX(Employee_ID), 0) + 1 AS newId
       FROM HR.dbo.Personal WITH (TABLOCKX)

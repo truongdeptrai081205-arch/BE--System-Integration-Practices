@@ -31,13 +31,13 @@ router.put("/update/:id", async (req, res) => {
       Gender
     } = req.body;
 
-    // ✅ convert Gender -> bit
+    //  convert Gender -> bit
     let genderBit;
     if (Gender?.toLowerCase() === "male") genderBit = 1;
     else if (Gender?.toLowerCase() === "female") genderBit = 0;
     else genderBit = null;
 
-    // ✅ convert Shareholder_Status -> bit
+    //  convert Shareholder_Status -> bit
     let shareholderBit;
     if (Shareholder_Status?.toLowerCase() === "yes") shareholderBit = 1;
     else if (Shareholder_Status?.toLowerCase() === "no") shareholderBit = 0;
@@ -57,7 +57,7 @@ router.put("/update/:id", async (req, res) => {
       WHERE Employee_ID = ${id}
     `;
 
-    // ✅ check có update không
+    // check có update không
     if (result.rowsAffected[0] === 0) {
       return res.status(404).json({ message: "Không tìm thấy Employee_ID" });
     }

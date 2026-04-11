@@ -26,7 +26,7 @@ router.get("/", async (req, res) => {
 
     const offset = (page - 1) * limit;
 
-    // 📊 STATS
+    // STATS
     const statsResult = await sql.query(`
       SELECT 
         COUNT(*) as totalEmployees,

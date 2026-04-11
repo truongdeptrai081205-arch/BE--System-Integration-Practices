@@ -20,13 +20,13 @@ router.delete("/delete/:id", async (req, res) => {
 
     const id = req.params.id;
 
-    // 🔥 xóa bảng con trước
+    //  xóa bảng con trước
     await sql.query`
       DELETE FROM HR.dbo.Employment
       WHERE Employee_ID = ${id}
     `;
 
-    // 🔥 rồi xóa bảng cha
+    //  rồi xóa bảng cha
     const result = await sql.query`
       DELETE FROM HR.dbo.Personal
       WHERE Employee_ID = ${id}

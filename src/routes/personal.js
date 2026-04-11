@@ -26,7 +26,7 @@ router.get("/", async (req, res) => {
 
     const offset = (page - 1) * limit;
 
-    // 📊 STATS: bạn có thể tùy chỉnh theo Personal, ví dụ đếm tổng số nhân viên
+    //  STATS: bạn có thể tùy chỉnh theo Personal, ví dụ đếm tổng số nhân viên
     const statsResult = await sql.query(`
       SELECT COUNT(*) as totalEmployees
       FROM Personal

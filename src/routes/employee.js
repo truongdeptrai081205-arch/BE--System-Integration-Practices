@@ -25,14 +25,14 @@ router.get("/", async (req, res) => {
 
         const offset = (page - 1) * limit;
 
-        // 📊 Tổng số nhân viên
+        // Tổng số nhân viên
         const statsResult = await sql.query(`
             SELECT COUNT(*) as totalEmployees
             FROM Personal
         `);
         const stats = statsResult.recordset[0];
 
-        // 📋 Lấy dữ liệu kèm Employment
+        // Lấy dữ liệu kèm Employment
         const dataResult = await sql.query(`
             SELECT 
                 p.Employee_ID,
