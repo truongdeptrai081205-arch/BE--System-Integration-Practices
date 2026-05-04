@@ -24,6 +24,8 @@ import summarydashbordRoutes from "./routes/SumDashbord.js";
 import addpersonalRoutes from "./routes/appPersonalList.js";
 import editpersonalRoutes from "./routes/editPersonalList.js";
 import deletePersonalRoutes from "./routes/deletePersonal.js";
+import employmentRatio from "./routes/employmentRatio.js";
+import sumsumRoutes from "./routes/sumsum.js";
 const app = express();
 
 // Settings
@@ -54,7 +56,7 @@ app.use("/api/employment", employmentRoutes);
 app.use("/api/benefit-plans", benefitPlansRoutes);
 app.use("/api/employee2", employeeRoutes2);
 app.use("/api/earnings", earningsRoutes);
-app.use("/api/vacation", vacationRoutes);
+app.use("/api/alerts/vacation", vacationRoutes);
 app.use("/api/benefits", benefitsRoutes);
 app.use("/api/alerts/birthday", birthdayRoutes);
 app.use("/api/alerts/anniversary", anniversaryRoutes);
@@ -62,6 +64,7 @@ app.use("/api/sumdashboard", summarydashbordRoutes);
 app.use("/api/appPersonalList", addpersonalRoutes);
 app.use("/api/editPersonalList", editpersonalRoutes);
 app.use("/api/deletePersonal", deletePersonalRoutes);
-
+app.use("/api/employment-ratio", employmentRatio);
+app.use("/api/sumsum", sumsumRoutes);
 
 export default app;

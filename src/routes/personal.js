@@ -49,7 +49,7 @@ router.get("/", async (req, res) => {
         ELSE 'N/A'
       END as Gender 
         FROM Personal
-        ORDER BY Employee_ID
+        ORDER BY Employee_ID DESC
         OFFSET ${offset} ROWS
         FETCH NEXT ${limit} ROWS ONLY
     `);

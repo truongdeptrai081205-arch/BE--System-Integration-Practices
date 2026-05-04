@@ -22,41 +22,94 @@ const poolPromise = new sql.ConnectionPool(sqlConfig)
   })
   .catch(err => console.log("Database Connection Failed!", err));
 
-// API: /api/birthday?day=5&month=4&page=1&pageSize=50
 router.get("/", async (req, res) => {
   try {
     const pool = await poolPromise;
 
-    // Lấy params, nếu không có thì mặc định ngày/tháng hôm nay
-    const day = parseInt(req.query.day) || new Date().getDate();
     const month = parseInt(req.query.month) || new Date().getMonth() + 1;
+    const year = new Date().getFullYear();
     const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.pageSize) || 50;
+
+    const allowedPageSizes = [10, 20, 50, 100, 200];
+    let pageSize = parseInt(req.query.pageSize) || 10;
+
+    if (!allowedPageSizes.includes(pageSize)) {
+      pageSize = 10;
+    }
+
     const offset = (page - 1) * pageSize;
 
-    // Query SQL chỉ lọc theo ngày + tháng, bỏ qua năm
-    const result = await pool.request().query(`
-      SELECT Employee_ID, First_Name, Last_Name, Birth_Date
-      FROM Personal
-      WHERE DAY(Birth_Date) = ${day} AND MONTH(Birth_Date) = ${month}
-      ORDER BY Birth_Date
-      OFFSET ${offset} ROWS
-      FETCH NEXT ${pageSize} ROWS ONLY
-    `);
+    // 🔹 Query có thêm field
+    const result = await pool.request()
+  .input("month", sql.Int, month)
+  .input("offset", sql.Int, offset)
+  .input("pageSize", sql.Int, pageSize)
+  .query(`
+    SELECT 
+      Employee_ID,
+      First_Name,
+      Last_Name,
+      Birth_Date,
+      Gender,
+      Email,
+      Phone_Number,
+      Shareholder_Status
+    FROM Personal
+    WHERE MONTH(Birth_Date) = @month
+    ORDER BY DAY(Birth_Date)
+    OFFSET @offset ROWS
+    FETCH NEXT @pageSize ROWS ONLY
+  `);
 
-    // Optionally: lấy tổng số sinh nhật trong ngày để front-end biết
-    const totalResult = await pool.request().query(`
-      SELECT COUNT(*) AS Total
-      FROM Personal
-      WHERE DAY(Birth_Date) = ${day} AND MONTH(Birth_Date) = ${month}
-    `);
+    // 🔹 Tổng
+    const totalResult = await pool.request()
+      .input("month", sql.Int, month)
+      .query(`
+        SELECT COUNT(*) AS Total
+        FROM Personal
+        WHERE MONTH(Birth_Date) = @month
+      `);
+
+    const total = totalResult.recordset[0].Total;
+
+    // 🔹 Message
+    const message = total > 0
+      ? `Thông báo: Tổng ${total} nhân viên có sinh nhật trong tháng ${month} năm ${year}.`
+      : `Thông báo: Không có nhân viên nào có sinh nhật trong tháng ${month} năm ${year}.`;
+
+    // 🔥 Transform data
+    const data = result.recordset.map(emp => ({
+  Employee_ID: emp.Employee_ID,
+
+  // 👉 tránh null
+  Full_Name: `${emp.First_Name || ""} ${emp.Last_Name || ""}`.trim(),
+
+  Birth_Date: emp.Birth_Date,
+
+  // 👉 convert Gender cho đẹp
+  Gender:
+    emp.Gender === "M" ? "Male" :
+    emp.Gender === "F" ? "Female" :
+    emp.Gender,
+
+  Email: emp.Email,
+
+  // ❗ sửa đúng tên cột
+  Phone: emp.Phone_Number,
+
+  // 👉 convert Yes/No
+  Shareholder_Status: emp.Shareholder_Status === 1 ? "Yes" : "No",
+}));
 
     res.json({
-      total: totalResult.recordset[0].Total,
+      message,
+      total,
       page,
       pageSize,
-      data: result.recordset,
+      totalPages: Math.ceil(total / pageSize),
+      data,
     });
+
   } catch (err) {
     console.error(err);
     res.status(500).send("BIRTHDAY ERROR");

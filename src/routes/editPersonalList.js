@@ -38,10 +38,11 @@ router.put("/update/:id", async (req, res) => {
     else genderBit = null;
 
     //  convert Shareholder_Status -> bit
-    let shareholderBit;
-    if (Shareholder_Status?.toLowerCase() === "yes") shareholderBit = 1;
-    else if (Shareholder_Status?.toLowerCase() === "no") shareholderBit = 0;
-    else shareholderBit = null;
+    // let shareholderBit;
+    // if (Shareholder_Status?.toLowerCase() === "yes") shareholderBit = 1;
+    // else if (Shareholder_Status?.toLowerCase() === "no") shareholderBit = 0;
+    // else shareholderBit = null;
+    const shareholderBit = Shareholder_Status;
 
     const result = await sql.query`
       UPDATE HR.dbo.Personal
